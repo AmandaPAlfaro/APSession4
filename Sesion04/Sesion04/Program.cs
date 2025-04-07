@@ -1,5 +1,8 @@
 ﻿using Sesion04.PatronSingleton;
+using Sesion04.PatronBuilder;
+using Sesion04.PatronPrototype;
 
+#region Patron Singleton
 Console.WriteLine("Patrones Creacionales");
 
 Console.WriteLine("Patron Singleton");
@@ -25,6 +28,32 @@ Console.WriteLine("Singleton con carga diferida(Lazy)");
 var singletonLazy = SingletonLazy.Instance;
 singletonLazy.ImprimeMensaje();
 
+#endregion
 
+Thread.Sleep(1000);
+//*****---------*****
+#region Patron Builder
 
-Console.ReadLine();
+ServiceConnection conexion = new ServiceConnectionBuilder("https://api.example.com/v1/data")
+    .Build();
+
+conexion.Connect();
+Console.WriteLine();
+
+var conexionSegura = new ServiceConnectionBuilder("https://api.example.com/v1/data")
+    .WithTimeout(TimeSpan.FromMinutes(2))
+    .WithRetries(2)
+    .WithBasicAuthentication("admin", "admin")
+    .WithProxy("proxy.company.com", 8080)
+    .UseSsl()
+    .Build();
+
+conexionSegura.Connect();
+Console.WriteLine();
+#endregion
+
+#region Patron Prototype
+
+AppNegocio.Ejecutar();
+
+#endregion
