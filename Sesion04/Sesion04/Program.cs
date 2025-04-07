@@ -57,3 +57,28 @@ Console.WriteLine();
 AppNegocio.Ejecutar();
 
 #endregion
+
+#region Patron Object Pool
+
+_ = Task.Factory.StartNew(async () =>
+{
+    var poolConexiones = new HttpClientPool(3);
+    await Task.WhenAll(
+        MakeRequest(poolConexiones, "https://jsonplaceholder.typicode.com/todos/1"),
+        MakeRequest(poolConexiones, "https://jsonplaceholder.typicode.com/todos/2"),
+        MakeRequest(poolConexiones, "https://jsonplaceholder.typicode.com/todos/3"));
+});
+
+static async Task MakeRequest(HttpClientPool pool, string url)
+{
+    HttpClient client = pool.GetClient();
+
+    Console.WriteLine($"Obteniendo datos de {url}");
+    string response = await client.GetStringAsync(url);
+    Console.WriteLine($"Respuesta recibida de {url}: {response.Substring(0, 50)}....");
+
+    pool.ReturnClient(client);
+}
+
+
+#endregion
